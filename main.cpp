@@ -3,59 +3,75 @@
 
 #include "Grid.h"
 
+using namespace std;
+
 int main()
 {
+	vector<Grid> solutions;
 	Grid sudoku;
+	sudoku.loadSolutions(solutions);
 	const int BEEP_LENGTH = 1250;
 	
-	int choice = 1;
+	int choice = -1;
 	while(true)
 	{
-		std::cout << "Quit program [0]" << std::endl;
-		std::cout << "Display solutions found [1]" << std::endl;
-		std::cout << "Generate solution [2]" << std::endl;
-		std::cout << "Generate many solutions (infinite) [3]" << std::endl;
-		
-		std::cin >> choice;
-		system("cls");
-		
-		if (choice == 0)
+		while (choice < 0 || choice > 4)
 		{
-			break;
-		}
-		else if (choice == 1)
-		{
-			sudoku.loadSolutions();
-			Beep(523, BEEP_LENGTH);
-		}
-		else if (choice == 2)
-		{
-			while (sudoku.generateGrid() == false)
+			cout << "Number of solutions found thus far: " << solutions.size() << endl << endl;
+			cout << "[0] Quit program" << endl;
+			cout << "[1] Display solutions found" << endl;
+			cout << "[2] Generate solution" << endl;
+			cout << "[3] Generate many solutions (infinite)" << endl;
+			cout << "[4] Save solutions" << endl;
+			cin >> choice;
+			system("cls");
+			
+			if (choice == 0)
 			{
-				
+				return 0;
 			}
-			sudoku.saveSolution();
-			sudoku.printGrid();
-			Beep(523, BEEP_LENGTH);
-		}
-		else if (choice == 3)
-		{
-			while (true)
+			else if (choice == 1)
+			{
+				sudoku.loadSolutions(solutions);
+				for (int i = 0; i < solutions.size(); ++i)
+				{
+					cout << i + 1 << ")" << endl;
+					solutions.at(i).printGrid();
+				}
+			}
+			else if (choice == 2)
 			{
 				while (sudoku.generateGrid() == false)
 				{
-					
+					continue;
 				}
-				sudoku.saveSolution();
 				sudoku.printGrid();
+				sudoku.storeSolution(solutions);
+				sudoku.saveSolutions(solutions);
+				sudoku.loadSolutions(solutions);
 				Beep(523, BEEP_LENGTH);
 			}
+			else if (choice == 3)
+			{
+				while (true)
+				{
+					while (sudoku.generateGrid() == false)
+					{
+						continue;
+					}
+					sudoku.printGrid();
+					sudoku.storeSolution(solutions);
+					sudoku.saveSolutions(solutions);
+					sudoku.loadSolutions(solutions);
+					Beep(523, BEEP_LENGTH);
+				}
+			}
+			else if (choice == 4)
+			{
+				sudoku.saveSolutions(solutions);
+			}
 		}
-		else
-		{
-			std::cout << "Invalid option.  Enter 0, 1, or 2: ";
-			std::cin >> choice;
-		}
+		choice = -1;
 	}
 	
 	return 0;
